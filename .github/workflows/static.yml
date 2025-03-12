@@ -26,31 +26,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Step 2: Set up Flutter environment
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 'stable'
+      # Step 2: Install FVM (Flutter Version Manager)
+      - name: Install FVM
+        run: |
+          curl -sSL https://git.io/fvm | bash
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
 
-      # Step 3: Install dependencies (if any)
+      # Step 3: Install the Flutter version using FVM (specify the exact version)
+      - name: Install Flutter version
+        run: |
+          fvm install 3.7.0  # Specify the Flutter version
+          fvm use 3.7.0      # Switch to the desired version
+
+      # Step 4: Install dependencies (if any)
       - name: Install dependencies
-        run: flutter pub get
+        run: fvm flutter pub get
 
-      # Step 4: Build the Flutter web app
+      # Step 5: Build the Flutter web app
       - name: Build Flutter web app
-        run: flutter build web --release
+        run: fvm flutter build web --release
 
-      # Step 5: Setup Pages for deployment
+      # Step 6: Setup Pages for deployment
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Step 6: Upload the build/web directory to GitHub Pages
+      # Step 7: Upload the build/web directory to GitHub Pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './build/web'
 
-      # Step 7: Deploy to GitHub Pages
+      # Step 8: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
